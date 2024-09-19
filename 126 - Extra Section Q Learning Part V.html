@@ -1,0 +1,74 @@
+<p>Hi everyone! </p><p>For this lecture, you will need to define helper functions which include the following (as a hint):&nbsp;</p><p><br></p><p>def is_terminal_state</p><p>def get_starting_location</p><p>def get_next_action</p><p>def get_next_location</p><p>def get_shortest_path</p><p><br></p><p>It's a great idea to try to solve this with your own ideas and then compare it to the code used to help reinforce the concepts from the course and practical experience. But if you want to see the code used to solve this part, please see the snippet below: </p><p><br></p><p><br></p><p><br></p><pre class="prettyprint linenums">Define Helper Functions:&nbsp;
+
+def is_terminal_state(current_row_index, current_column_index):
+&nbsp; &nbsp; """
+&nbsp; &nbsp; Function to determine if the specified location is a terminal state
+&nbsp; &nbsp; """
+
+&nbsp; &nbsp; if rewards[current_row_index, current_column_index] == -1.:
+&nbsp; &nbsp; &nbsp; &nbsp; return False
+&nbsp; &nbsp; else:
+&nbsp; &nbsp; &nbsp; &nbsp; return True
+
+def get_starting_location():
+&nbsp; &nbsp; """
+&nbsp; &nbsp; Function to choose a random non-terminal starting location.
+&nbsp; &nbsp; """
+
+&nbsp; &nbsp; current_row_index = np.random.randint(environment_rows)
+
+&nbsp; &nbsp; current_column_index = np.random.randint(environment_columns)
+
+&nbsp; &nbsp; while is_terminal_state(current_row_index, current_column_index):
+&nbsp; &nbsp; &nbsp; &nbsp; current_row_index = np.random.randint(environment_rows)
+&nbsp; &nbsp; &nbsp; &nbsp; current_column_index = np.random.randint(environment_columns)
+
+&nbsp; &nbsp; return current_row_index, current_column_index
+
+def get_next_action(current_row_index, current_column_index, epsilon):
+&nbsp; &nbsp; """
+&nbsp; &nbsp; Function to choose the next action, according to the epsilon value.
+&nbsp; &nbsp; """
+
+&nbsp; &nbsp; if np.random.random() &lt; epsilon:
+&nbsp; &nbsp; &nbsp; &nbsp; return np.argmax(q_values[current_row_index, current_column_index])
+&nbsp; &nbsp; else:
+&nbsp; &nbsp; &nbsp; &nbsp; return np.random.randint(4)
+
+def get_next_location(current_row_index, current_column_index, action_index):
+&nbsp; &nbsp; """
+&nbsp; &nbsp; Function to get the next location based on the chosen action.
+&nbsp; &nbsp; """
+
+&nbsp; &nbsp; new_row_index = current_row_index
+&nbsp; &nbsp; new_column_index = current_column_index
+&nbsp; &nbsp; 
+&nbsp; &nbsp; if actions[action_index] == 'up' and current_row_index &gt; 0:
+&nbsp; &nbsp; &nbsp; &nbsp; new_row_index -= 1
+&nbsp; &nbsp; elif actions[action_index] == 'right' and current_column_index &lt; environment_columns - 1:
+&nbsp; &nbsp; &nbsp; &nbsp; new_column_index += 1
+&nbsp; &nbsp; elif actions[action_index] == 'down' and current_row_index &lt; environment_rows - 1:
+&nbsp; &nbsp; &nbsp; &nbsp; new_row_index += 1
+&nbsp; &nbsp; elif actions[action_index] == 'left' and current_column_index &gt; 0:
+&nbsp; &nbsp; &nbsp; &nbsp; new_column_index -= 1
+&nbsp; &nbsp; return new_row_index, new_column_index
+
+def get_shortest_path(start_row_index, start_column_index):
+&nbsp; &nbsp; """
+&nbsp; &nbsp; Function that will get the shortest path between any location within the city 
+&nbsp; &nbsp; that the postman is allowed to travel and the item packaging location.
+&nbsp; &nbsp; """
+
+&nbsp; &nbsp; if is_terminal_state(start_row_index, start_column_index):
+&nbsp; &nbsp; &nbsp; &nbsp; return []
+&nbsp; &nbsp; else: 
+&nbsp; &nbsp; &nbsp; &nbsp; current_row_index, current_column_index = start_row_index, start_column_index
+&nbsp; &nbsp; &nbsp; &nbsp; shortest_path = []
+&nbsp; &nbsp; &nbsp; &nbsp; shortest_path.append([current_row_index, current_column_index])
+
+&nbsp; &nbsp; &nbsp; &nbsp; while not is_terminal_state(current_row_index, current_column_index):
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; action_index = get_next_action(current_row_index, current_column_index, 1.)
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; current_row_index, current_column_index = get_next_location(current_row_index, current_column_index, action_index)
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; shortest_path.append([current_row_index, current_column_index])
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; 
+&nbsp; &nbsp; return shortest_path</pre>
